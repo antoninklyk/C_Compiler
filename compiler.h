@@ -19,6 +19,7 @@ enum
     TOKEN_TYPE_KEYWORD,
     TOKEN_TYPE_OPERATOR,
     TOKEN_TYPE_SYMBOL,
+    TOKEN_TYPE_STRING,
     TOKEN_TYPE_COMMENT,
     TOKEN_TYPE_NEWLINE
 };
@@ -45,8 +46,7 @@ struct token
     // whitespace between tokens
     bool whitespace;
 
-    // (Hello World) (5+10+20)
-    const char* between_bracketss;
+    const char* between_brackets;
 
 };
 
@@ -56,13 +56,17 @@ struct lex_process
     struct vector* token_vec;
     struct compile_process* compiler;
 
+    /**
+     * 
+     * @brief
+     */
     int current_expression_count;
     struct buffer* parentheses_buffer;
     struct lex_process_functions* function;
 
     // This will be private data that the lexer does understand but the person using lexer understand
     void* private;
-}
+};
 
 enum
 {
