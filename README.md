@@ -1,4 +1,6 @@
-C Compiler from scratch 
+C Compiler from scratch
+
+TO DO : debug segfault
 
 lexer : in progress
 
