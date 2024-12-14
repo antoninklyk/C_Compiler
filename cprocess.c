@@ -9,7 +9,7 @@ struct compile_process* compile_process_create(const char* filename, const char*
     FILE* file = fopen(filename, "r"); //Entry of cprocess
     if(!file)
     {
-        return NULL; //renvoie une structure compile process nulle
+        return NULL; //si l'ouverture fichier en mode read a failed, renvoie une structure compile process nulle
     }
 
     FILE* out_file = NULL;
@@ -35,11 +35,13 @@ char compile_process_next_char(struct lex_process* lex_process)
     struct compile_process* compiler = lex_process->compiler;
     compiler-> pos.col += 1;
     char c = getc(compiler->cfile.fp);
+    
     if(c == '\n')
     {
         compiler->pos.col = 1;
         compiler->pos.line += 1;
     }
+    //a la fin le curseur est un caractère plus loin dans le flux
 
     return c;
 
@@ -49,13 +51,14 @@ char compile_process_next_char(struct lex_process* lex_process)
 char compile_process_peek_char(struct lex_process* lex_process)
 {
     struct compile_process* compiler = lex_process->compiler;
-    char c = getc(compiler->cfile.fp);
-    ungetc(c, compiler->cfile.fp);
+    char c = getc(compiler->cfile.fp); //le caractere est prit du flux
+    ungetc(c, compiler->cfile.fp); //le caractere est remit dans le flux
+    //a la fin le curseur est toujours sur le meme caractere dans le flux
     return c;
 }
 
 void compile_process_push_char(struct lex_process* lex_process, char c)
 {
     struct compile_process* compiler = lex_process->compiler;
-    ungetc(c, compiler->cfile.fp);
+    ungetc(c, compiler->cfile.fp); //J’ai lu un caractère inutile, je le replace dans fluxpour qu’il soit traité plus tard.
 }

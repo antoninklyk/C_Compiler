@@ -4,6 +4,19 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define NUMERIC CASES \
+    case '0':         \
+    case '1':         \
+    case '2':         \
+    case '3':         \
+    case '4':         \
+    case '5':         \
+    case '6':         \
+    case '7':         \
+    case '8':         \
+    case '9'
+
+
 // need to know the position on the file
 struct pos
 {
@@ -21,6 +34,7 @@ enum
 // Token types enumeration
 enum
 {
+    TOKEN_TYPE_NUMBER,
     TOKEN_TYPE_IDENTIFIER,
     TOKEN_TYPE_KEYWORD,
     TOKEN_TYPE_OPERATOR,
@@ -34,7 +48,7 @@ struct token
 {
     int type;
     int flags;
-
+    struct pos pos;
     // A union in C is a special data type that allows you to store different data types in the same memory location. 
     // However, at any given time, only one of the data members can contain a value, as all members of the union share the same memory space. This is in contrast to a struct, where each member has its own memory.
     union
@@ -74,17 +88,11 @@ struct lex_process
     struct pos pos;
     struct vector* token_vec;
     struct compile_process* compiler;
-
-    /**
-     * 
-     * @brief
-     */
     int current_expression_count;
     struct buffer* parentheses_buffer;
     struct lex_process_functions* function;
-
-    // This will be private data that the lexer does understand but the person using lexer understand
-    void* private;
+    // This will be private data that the lexer doesn't understand but the person using lexer understand
+    void* user_data;
 };
 
 enum
@@ -113,11 +121,13 @@ char compile_process_next_char(struct lex_process* lex_process);
 char compile_process_peek_char(struct lex_process* lex_process);
 void compile_process_push_char(struct lex_process* lex_process, char c);
 
-struct lex_process* lex_process_create(struct compile_process* compiler, struct lex_process_functions* functions, void* private);
+struct lex_process* lex_process_create(struct compile_process* compiler, struct lex_process_functions* functions, void* user_data);
 void lex_process_free(struct lex_process* process);
 void lex_process_private(struct lex_process* process);
 struct vector* lex_process_tokens(struct lex_process* process);
 
 int lex(struct lex_process* process);
 
+void compiler_error(struct compile_process* compiler, char* msg,...);
+void compiler_warning(struct compile_process* compiler, char* msg,...);
 #endif
